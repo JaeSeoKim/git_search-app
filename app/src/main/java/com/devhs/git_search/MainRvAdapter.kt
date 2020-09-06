@@ -11,25 +11,27 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
 
-class MainRvAdapter(val context: Context, val itemList: ArrayList<GitItemData>)
+class MainRvAdapter(private val context: Context, private val itemList: ArrayList<GitItemData>, private val onItemClick: (GitItemData) -> Unit)
     : RecyclerView.Adapter<MainRvAdapter.Holder>(){
-    inner class Holder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
-        val repoTitle = itemView?.findViewById<TextView>(R.id.item_title)
-        val repoDescriptn = itemView?.findViewById<TextView>(R.id.item_description)
-        val repoProfileImg = itemView?.findViewById<ImageView>(R.id.item_profileImg)
+
+    inner class Holder(itemView: View?, val onItemClick: (GitItemData) -> Unit) : RecyclerView.ViewHolder(itemView!!) {
+        private val repoTitle = itemView?.findViewById<TextView>(R.id.item_title)
+        private val repoLanguage = itemView?.findViewById<TextView>(R.id.item_language)
+        private val repoAvatarUrl = itemView?.findViewById<ImageView>(R.id.item_avatar_url)
 
         fun bind (item: GitItemData, context: Context) {
             repoTitle?.text = item.title
-            repoDescriptn?.text = item.descripton
-            if (repoProfileImg != null) {
-                Glide.with(context).load(Uri.parse(item.profileImgUrl)).into(repoProfileImg)
-            };
+            repoLanguage?.text = item.language
+            if (repoAvatarUrl != null) {
+                Glide.with(context).load(Uri.parse(item.repoAvatarUrl)).into(repoAvatarUrl)
+            }
+            itemView.setOnClickListener { onItemClick(item) }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val view = LayoutInflater.from(context).inflate(R.layout.list_item, parent, false)
-        return Holder(view)
+        return Holder(view, onItemClick)
     }
 
     override fun getItemCount(): Int {
